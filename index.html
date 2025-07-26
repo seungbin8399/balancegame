@@ -23,7 +23,7 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-    button {
+    button, .btn-link {
       padding: 10px 15px;
       font-size: 1rem;
       cursor: pointer;
@@ -35,8 +35,11 @@
       transition: background 0.3s ease;
       flex: 1 1 40%;
       max-width: 150px;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
     }
-    button:hover {
+    button:hover, .btn-link:hover {
       background-color: #45a049;
     }
     .btn-all-questions {
@@ -115,7 +118,7 @@
   </div>
 
   <div class="feedback">
-    <button class="btn-feedback" onclick="window.open('https://naver.me/FtG8vNgc', '_blank')">건의사항 남기기</button>
+    <button class="btn-feedback" onclick="location.href='https://forms.gle/yourGoogleFormLink'">건의사항 남기기</button>
   </div>
 
   <script>
@@ -135,7 +138,7 @@
       "결혼 전, 과거 했던 동거 사실, 밝혀야 한다 vs 비밀로 해도 된다",
       "결과는 나쁘지만 의도는 선한 행동 vs 결과는 좋지만 의도는 악한 행동",
       "성선설 vs 성악설",
-      "우정 vs 사랑(◍•ᴗ•◍)❤"
+      "우정 vs 사랑❤"
     ];
 
     let questions = [...originalQuestions];
