@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>밸런스 게임 랜덤 뽑기</title>
   <style>
     body {
@@ -23,7 +23,7 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-    button, .btn-link {
+    button {
       padding: 10px 15px;
       font-size: 1rem;
       cursor: pointer;
@@ -35,11 +35,8 @@
       transition: background 0.3s ease;
       flex: 1 1 40%;
       max-width: 150px;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
     }
-    button:hover, .btn-link:hover {
+    button:hover {
       background-color: #45a049;
     }
     .btn-all-questions {
@@ -105,9 +102,9 @@
 <body>
   <h1>밸런스 게임 질문 뽑기</h1>
   <div class="buttons">
-    <button onclick="pickQuestion()">질문 뽑기</button>
-    <button onclick="resetQuestions()">다시 시작</button>
-    <button class="btn-all-questions" onclick="toggleAllQuestions()">모든 질문 보기</button>
+    <button id="pickBtn">질문 뽑기</button>
+    <button id="resetBtn">다시 시작</button>
+    <button class="btn-all-questions" id="allBtn">모든 질문 보기</button>
   </div>
   <div class="question-box" id="questionBox">버튼을 눌러 질문을 뽑아보세요!</div>
   <div id="count">0 / 0</div>
@@ -118,7 +115,7 @@
   </div>
 
   <div class="feedback">
-    <button class="btn-feedback" onclick="location.href='https://forms.gle/yourGoogleFormLink'">건의사항 남기기</button>
+    <button class="btn-feedback" id="feedbackBtn">건의사항 남기기</button>
   </div>
 
   <script>
@@ -154,10 +151,9 @@
       usedQuestions.push(question);
       const box = document.getElementById("questionBox");
       box.classList.remove("fade-in");
-      requestAnimationFrame(() => {
-        box.classList.add("fade-in");
-        box.innerText = question;
-      });
+      void box.offsetWidth;
+      box.classList.add("fade-in");
+      box.innerText = question;
       updateCount();
     }
 
@@ -181,12 +177,19 @@
     function renderAllQuestions() {
       const list = document.getElementById("questionList");
       list.innerHTML = '';
-      originalQuestions.forEach((q, index) => {
+      originalQuestions.forEach(q => {
         const li = document.createElement('li');
         li.textContent = q;
         list.appendChild(li);
       });
     }
+
+    document.getElementById("pickBtn").addEventListener("click", pickQuestion);
+    document.getElementById("resetBtn").addEventListener("click", resetQuestions);
+    document.getElementById("allBtn").addEventListener("click", toggleAllQuestions);
+    document.getElementById("feedbackBtn").addEventListener("click", () => {
+      window.location.href = "https://forms.gle/yourGoogleFormLink";
+    });
 
     updateCount();
   </script>
