@@ -13,24 +13,28 @@
     }
     h1 {
       font-size: 2rem;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       color: #333;
+    }
+    .buttons {
+      margin: 20px 0;
     }
     button {
       padding: 10px 20px;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       cursor: pointer;
       border: none;
       border-radius: 8px;
       background-color: #4CAF50;
       color: white;
+      margin: 5px;
       transition: background 0.3s ease;
     }
     button:hover {
       background-color: #45a049;
     }
     .question-box {
-      margin-top: 40px;
+      margin-top: 20px;
       padding: 20px;
       background: white;
       border-radius: 12px;
@@ -39,15 +43,53 @@
       color: #222;
       min-height: 80px;
     }
+    #count {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #555;
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .all-questions {
+      margin-top: 30px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      font-size: 1rem;
+      display: none;
+      text-align: left;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .all-questions ul {
+      padding-left: 20px;
+    }
   </style>
 </head>
 <body>
   <h1>밸런스 게임 질문 뽑기</h1>
-  <button onclick="pickQuestion()">질문 뽑기</button>
+  <div class="buttons">
+    <button onclick="pickQuestion()">질문 뽑기</button>
+    <button onclick="resetQuestions()">다시 시작</button>
+    <button onclick="toggleAllQuestions()">모든 질문 보기</button>
+  </div>
   <div class="question-box" id="questionBox">버튼을 눌러 질문을 뽑아보세요!</div>
+  <div id="count">0 / 10</div>
+
+  <div class="all-questions" id="allQuestions">
+    <h3>모든 질문 목록</h3>
+    <ul id="questionList"></ul>
+  </div>
 
   <script>
-    const questions = [
+    const originalQuestions = [
       "모든 슬픔을 없애기 vs 모든 기쁨을 없애기",
       "죽는 순간을 미리 알기 vs 죽는 순간을 모른 채 살기",
       "행복하지만 의미 없는 삶 vs 의미 있지만 고통스러운 삶",
@@ -60,6 +102,7 @@
       "사랑 없는 안정적인 관계 vs 열정적이지만 불안정한 관계"
     ];
 
+    let questions = [...originalQuestions];
     let usedQuestions = [];
 
     function pickQuestion() {
@@ -70,7 +113,35 @@
       const randomIndex = Math.floor(Math.random() * questions.length);
       const question = questions.splice(randomIndex, 1)[0];
       usedQuestions.push(question);
-      document.getElementById("questionBox").innerText = question;
+      const box = document.getElementById("questionBox");
+      box.classList.remove("fade-in");
+      void box.offsetWidth;
+      box.classList.add("fade-in");
+      box.innerText = question;
+      updateCount();
+    }
+
+    function resetQuestions() {
+      questions = [...originalQuestions];
+      usedQuestions = [];
+      document.getElementById("questionBox").innerText = "다시 시작합니다! 질문을 뽑아보세요!";
+      updateCount();
+    }
+
+    function updateCount() {
+      document.getElementById("count").innerText = `${usedQuestions.length} / ${originalQuestions.length}`;
+    }
+
+    function toggleAllQuestions() {
+      const allQuestionsDiv = document.getElementById("allQuestions");
+      const list = document.getElementById("questionList");
+      list.innerHTML = '';
+      originalQuestions.forEach((q, index) => {
+        const li = document.createElement('li');
+        li.textContent = q;
+        list.appendChild(li);
+      });
+      allQuestionsDiv.style.display = allQuestionsDiv.style.display === "none" ? "block" : "none";
     }
   </script>
 </body>
