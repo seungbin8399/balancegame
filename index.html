@@ -71,92 +71,66 @@
 <body>
   <h1>밸런스 게임 질문 뽑기</h1>
   <div class="buttons">
-    <button onclick="pickQuestion('philosophy')">철학 질문 뽑기</button>
-    <button onclick="pickQuestion('light')">가벼운 질문 뽑기</button>
-    <button onclick="pickQuestion('all')">전체 질문 뽑기</button>
+    <button onclick="pickQuestion()">질문 뽑기</button>
     <button onclick="resetQuestions()">다시 시작</button>
     <button onclick="toggleAllQuestions()">모든 질문 보기</button>
   </div>
   <div class="question-box" id="questionBox">버튼을 눌러 질문을 뽑아보세요!</div>
-  <div id="count">철학: 0 / 0 | 가벼운: 0 / 0</div>
+  <div id="count">0 / 0</div>
 
   <div class="all-questions" id="allQuestions">
-    <h3>철학 질문 목록</h3>
-    <ul id="philosophyList"></ul>
-    <h3>가벼운 질문 목록</h3>
-    <ul id="lightList"></ul>
+    <h3>질문 목록</h3>
+    <ul id="questionList"></ul>
   </div>
 
   <script>
-    let philosophyQuestions = [
+    let originalQuestions = [
       "모든 슬픔을 없애기 vs 모든 기쁨을 없애기",
       "죽는 순간을 미리 알기 vs 죽는 순간을 모른 채 살기",
       "행복하지만 의미 없는 삶 vs 의미 있지만 고통스러운 삶",
-      "스스로 선택한 실패 vs 강요된 성공",
-      "인류 전체를 위해 희생 vs 내 가족과 나만 지키기",
-      "성선설 vs 성악설",
-      "결과는 나쁘지만 의도는 선한 행동 vs 결과는 좋지만 의도는 악한 행동",
-      "진실을 알고 상처받기 vs 거짓을 믿고 평온하기",
-      "선한 거짓말로 사람을 위로하기 vs 냉정한 진실로 사람을 일깨우기"
-    ];
-
-    let lightQuestions = [
       "불타는 연애 vs 편안한 우정 같은 연애",
       "나를 100% 이해하는 연인 vs 나를 100% 설레게 하는 연인",
+      "스스로 선택한 실패 vs 강요된 성공",
+      "인류 전체를 위해 희생 vs 내 가족과 나만 지키기",
+      "1년 동안 휴대폰 없이 살기 vs 1년 동안 친구 없이 살기",
+      "돈은 풍족하지만 시간이 없음 vs 시간은 많지만 돈이 없음",
       "사랑 없는 안정적인 관계 vs 열정적이지만 불안정한 관계",
+      "선한 거짓말로 사람을 위로하기 vs 냉정한 진실로 사람을 일깨우기",
+      "진실을 알고 상처받기 vs 거짓을 믿고 평온하기",
       "결혼 전, 과거 했던 동거 사실, 밝혀야 한다 vs 비밀로 해도 된다",
-      "우정 vs 사랑❤"
+      "결과는 나쁘지만 의도는 선한 행동 vs 결과는 좋지만 의도는 악한 행동",
+      "성선설 vs 성악설",
+      "우정 vs 사랑(◍•ᴗ•◍)❤"
     ];
 
-    let usedPhilosophy = [];
-    let usedLight = [];
+    let questions = [...originalQuestions];
+    let usedQuestions = [];
 
-    function pickQuestion(type) {
-      let currentArray;
-      let usedArray;
-      if (type === 'philosophy') {
-        currentArray = philosophyQuestions;
-        usedArray = usedPhilosophy;
-      } else if (type === 'light') {
-        currentArray = lightQuestions;
-        usedArray = usedLight;
-      } else {
-        currentArray = philosophyQuestions.concat(lightQuestions);
-        usedArray = usedPhilosophy.concat(usedLight);
-      }
-
-      if (currentArray.length === 0) {
+    function pickQuestion() {
+      if (questions.length === 0) {
         document.getElementById("questionBox").innerText = "모든 질문을 다 뽑았습니다!";
         return;
       }
-      const randomIndex = Math.floor(Math.random() * currentArray.length);
-      const question = currentArray[randomIndex];
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      const question = questions.splice(randomIndex, 1)[0];
+      usedQuestions.push(question);
       const box = document.getElementById("questionBox");
       box.classList.remove("fade-in");
       void box.offsetWidth;
       box.classList.add("fade-in");
       box.innerText = question;
-      if (type === 'philosophy') {
-        currentArray.splice(randomIndex, 1);
-        usedArray.push(question);
-      } else if (type === 'light') {
-        currentArray.splice(randomIndex, 1);
-        usedArray.push(question);
-      }
       updateCount();
     }
 
     function resetQuestions() {
-      philosophyQuestions = philosophyQuestions.concat(usedPhilosophy);
-      lightQuestions = lightQuestions.concat(usedLight);
-      usedPhilosophy = [];
-      usedLight = [];
+      questions = [...originalQuestions];
+      usedQuestions = [];
       document.getElementById("questionBox").innerText = "다시 시작합니다! 질문을 뽑아보세요!";
       updateCount();
     }
 
     function updateCount() {
-      document.getElementById("count").innerText = `철학: ${usedPhilosophy.length} / ${usedPhilosophy.length + philosophyQuestions.length} | 가벼운: ${usedLight.length} / ${usedLight.length + lightQuestions.length}`;
+      document.getElementById("count").innerText = `${usedQuestions.length} / ${originalQuestions.length}`;
     }
 
     function toggleAllQuestions() {
@@ -166,19 +140,12 @@
     }
 
     function renderAllQuestions() {
-      const philosophyList = document.getElementById("philosophyList");
-      const lightList = document.getElementById("lightList");
-      philosophyList.innerHTML = '';
-      lightList.innerHTML = '';
-      philosophyQuestions.concat(usedPhilosophy).forEach(q => {
+      const list = document.getElementById("questionList");
+      list.innerHTML = '';
+      originalQuestions.forEach((q, index) => {
         const li = document.createElement('li');
         li.textContent = q;
-        philosophyList.appendChild(li);
-      });
-      lightQuestions.concat(usedLight).forEach(q => {
-        const li = document.createElement('li');
-        li.textContent = q;
-        lightList.appendChild(li);
+        list.appendChild(li);
       });
     }
 
