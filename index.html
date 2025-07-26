@@ -33,6 +33,12 @@
     button:hover {
       background-color: #45a049;
     }
+    .btn-all-questions {
+      background-color: #008CBA;
+    }
+    .btn-all-questions:hover {
+      background-color: #007BB5;
+    }
     .question-box {
       margin-top: 20px;
       padding: 20px;
@@ -76,7 +82,7 @@
   <div class="buttons">
     <button onclick="pickQuestion()">질문 뽑기</button>
     <button onclick="resetQuestions()">다시 시작</button>
-    <button onclick="toggleAllQuestions()">모든 질문 보기</button>
+    <button class="btn-all-questions" onclick="toggleAllQuestions()">모든 질문 보기</button>
   </div>
   <div class="question-box" id="questionBox">버튼을 눌러 질문을 뽑아보세요!</div>
   <div id="count">0 / 0</div>
