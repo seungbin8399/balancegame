@@ -55,7 +55,7 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
-    .all-questions {
+    .all-questions, .manage-section {
       margin-top: 30px;
       padding: 15px;
       background: white;
@@ -71,6 +71,21 @@
     .all-questions ul {
       padding-left: 20px;
     }
+    .manage-section textarea {
+      width: 100%;
+      height: 100px;
+    }
+    .question-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .question-item button {
+      background-color: #e74c3c;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+    }
   </style>
 </head>
 <body>
@@ -79,6 +94,7 @@
     <button onclick="pickQuestion()">질문 뽑기</button>
     <button onclick="resetQuestions()">다시 시작</button>
     <button onclick="toggleAllQuestions()">모든 질문 보기</button>
+    <button onclick="toggleManageQuestions()">질문 관리</button>
   </div>
   <div class="question-box" id="questionBox">버튼을 눌러 질문을 뽑아보세요!</div>
   <div id="count">0 / 10</div>
@@ -88,8 +104,15 @@
     <ul id="questionList"></ul>
   </div>
 
+  <div class="manage-section" id="manageSection">
+    <h3>질문 관리</h3>
+    <textarea id="manageInput"></textarea><br>
+    <button onclick="saveQuestions()">질문 저장</button>
+    <button onclick="addQuestion()">질문 추가</button>
+  </div>
+
   <script>
-    const originalQuestions = [
+    let originalQuestions = [
       "모든 슬픔을 없애기 vs 모든 기쁨을 없애기",
       "죽는 순간을 미리 알기 vs 죽는 순간을 모른 채 살기",
       "행복하지만 의미 없는 삶 vs 의미 있지만 고통스러운 삶",
@@ -134,14 +157,54 @@
 
     function toggleAllQuestions() {
       const allQuestionsDiv = document.getElementById("allQuestions");
+      renderAllQuestions();
+      allQuestionsDiv.style.display = allQuestionsDiv.style.display === "none" ? "block" : "none";
+    }
+
+    function renderAllQuestions() {
       const list = document.getElementById("questionList");
       list.innerHTML = '';
       originalQuestions.forEach((q, index) => {
         const li = document.createElement('li');
-        li.textContent = q;
+        li.classList.add('question-item');
+        li.innerHTML = `${q} <button onclick="removeQuestion(${index})">삭제</button>`;
         list.appendChild(li);
       });
-      allQuestionsDiv.style.display = allQuestionsDiv.style.display === "none" ? "block" : "none";
+    }
+
+    function toggleManageQuestions() {
+      const manageDiv = document.getElementById("manageSection");
+      const textArea = document.getElementById("manageInput");
+      textArea.value = originalQuestions.join("\n");
+      manageDiv.style.display = manageDiv.style.display === "none" ? "block" : "none";
+    }
+
+    function saveQuestions() {
+      const textArea = document.getElementById("manageInput");
+      originalQuestions = textArea.value.split("\n").map(q => q.trim()).filter(q => q);
+      resetQuestions();
+      renderAllQuestions();
+      alert("질문이 저장되었습니다.");
+    }
+
+    function addQuestion() {
+      const textArea = document.getElementById("manageInput");
+      const newQuestion = prompt("추가할 질문을 입력하세요:");
+      if (newQuestion) {
+        originalQuestions.push(newQuestion);
+        textArea.value = originalQuestions.join("\n");
+        resetQuestions();
+        renderAllQuestions();
+      }
+    }
+
+    function removeQuestion(index) {
+      if (confirm("이 질문을 삭제할까요?")) {
+        originalQuestions.splice(index, 1);
+        resetQuestions();
+        renderAllQuestions();
+        document.getElementById("manageInput").value = originalQuestions.join("\n");
+      }
     }
   </script>
 </body>
