@@ -72,18 +72,19 @@
   <h1>밸런스 게임 질문 뽑기</h1>
   <div class="buttons">
     <button onclick="pickQuestion('philosophy')">철학 질문 뽑기</button>
-    <button onclick="pickQuestion('love')">가벼운 질문 뽑기</button>
+    <button onclick="pickQuestion('light')">가벼운 질문 뽑기</button>
+    <button onclick="pickQuestion('all')">전체 질문 뽑기</button>
     <button onclick="resetQuestions()">다시 시작</button>
     <button onclick="toggleAllQuestions()">모든 질문 보기</button>
   </div>
   <div class="question-box" id="questionBox">버튼을 눌러 질문을 뽑아보세요!</div>
-  <div id="count">철학: 0 / 0 | 가벼운 질문: 0 / 0</div>
+  <div id="count">철학: 0 / 0 | 가벼운: 0 / 0</div>
 
   <div class="all-questions" id="allQuestions">
     <h3>철학 질문 목록</h3>
     <ul id="philosophyList"></ul>
     <h3>가벼운 질문 목록</h3>
-    <ul id="loveList"></ul>
+    <ul id="lightList"></ul>
   </div>
 
   <script>
@@ -99,7 +100,7 @@
       "선한 거짓말로 사람을 위로하기 vs 냉정한 진실로 사람을 일깨우기"
     ];
 
-    let loveQuestions = [
+    let lightQuestions = [
       "불타는 연애 vs 편안한 우정 같은 연애",
       "나를 100% 이해하는 연인 vs 나를 100% 설레게 하는 연인",
       "사랑 없는 안정적인 관계 vs 열정적이지만 불안정한 관계",
@@ -108,37 +109,54 @@
     ];
 
     let usedPhilosophy = [];
-    let usedLove = [];
+    let usedLight = [];
 
     function pickQuestion(type) {
-      let currentArray = type === 'philosophy' ? philosophyQuestions : loveQuestions;
-      let usedArray = type === 'philosophy' ? usedPhilosophy : usedLove;
+      let currentArray;
+      let usedArray;
+      if (type === 'philosophy') {
+        currentArray = philosophyQuestions;
+        usedArray = usedPhilosophy;
+      } else if (type === 'light') {
+        currentArray = lightQuestions;
+        usedArray = usedLight;
+      } else {
+        currentArray = philosophyQuestions.concat(lightQuestions);
+        usedArray = usedPhilosophy.concat(usedLight);
+      }
+
       if (currentArray.length === 0) {
-        document.getElementById("questionBox").innerText = `${type === 'philosophy' ? '철학' : '연애'} 질문을 모두 뽑았습니다!`;
+        document.getElementById("questionBox").innerText = "모든 질문을 다 뽑았습니다!";
         return;
       }
       const randomIndex = Math.floor(Math.random() * currentArray.length);
-      const question = currentArray.splice(randomIndex, 1)[0];
-      usedArray.push(question);
+      const question = currentArray[randomIndex];
       const box = document.getElementById("questionBox");
       box.classList.remove("fade-in");
       void box.offsetWidth;
       box.classList.add("fade-in");
       box.innerText = question;
+      if (type === 'philosophy') {
+        currentArray.splice(randomIndex, 1);
+        usedArray.push(question);
+      } else if (type === 'light') {
+        currentArray.splice(randomIndex, 1);
+        usedArray.push(question);
+      }
       updateCount();
     }
 
     function resetQuestions() {
       philosophyQuestions = philosophyQuestions.concat(usedPhilosophy);
-      loveQuestions = loveQuestions.concat(usedLove);
+      lightQuestions = lightQuestions.concat(usedLight);
       usedPhilosophy = [];
-      usedLove = [];
+      usedLight = [];
       document.getElementById("questionBox").innerText = "다시 시작합니다! 질문을 뽑아보세요!";
       updateCount();
     }
 
     function updateCount() {
-      document.getElementById("count").innerText = `철학: ${usedPhilosophy.length} / ${usedPhilosophy.length + philosophyQuestions.length} | 연애: ${usedLove.length} / ${usedLove.length + loveQuestions.length}`;
+      document.getElementById("count").innerText = `철학: ${usedPhilosophy.length} / ${usedPhilosophy.length + philosophyQuestions.length} | 가벼운: ${usedLight.length} / ${usedLight.length + lightQuestions.length}`;
     }
 
     function toggleAllQuestions() {
@@ -149,18 +167,18 @@
 
     function renderAllQuestions() {
       const philosophyList = document.getElementById("philosophyList");
-      const loveList = document.getElementById("loveList");
+      const lightList = document.getElementById("lightList");
       philosophyList.innerHTML = '';
-      loveList.innerHTML = '';
+      lightList.innerHTML = '';
       philosophyQuestions.concat(usedPhilosophy).forEach(q => {
         const li = document.createElement('li');
         li.textContent = q;
         philosophyList.appendChild(li);
       });
-      loveQuestions.concat(usedLove).forEach(q => {
+      lightQuestions.concat(usedLight).forEach(q => {
         const li = document.createElement('li');
         li.textContent = q;
-        loveList.appendChild(li);
+        lightList.appendChild(li);
       });
     }
 
