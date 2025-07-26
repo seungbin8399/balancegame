@@ -10,7 +10,6 @@
       text-align: center;
       padding: 20px;
       background: #f4f4f4;
-      margin: 0;
     }
     h1 {
       font-size: 2rem;
@@ -19,13 +18,10 @@
     }
     .buttons {
       margin: 20px 0;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
     }
     button {
-      padding: 10px 15px;
-      font-size: 1rem;
+      padding: 10px 20px;
+      font-size: 1.1rem;
       cursor: pointer;
       border: none;
       border-radius: 8px;
@@ -33,23 +29,9 @@
       color: white;
       margin: 5px;
       transition: background 0.3s ease;
-      flex: 1 1 40%;
-      max-width: 150px;
     }
     button:hover {
       background-color: #45a049;
-    }
-    .btn-all-questions {
-      background-color: #008CBA;
-    }
-    .btn-all-questions:hover {
-      background-color: #007BB5;
-    }
-    .btn-feedback {
-      background-color: #FF9800;
-    }
-    .btn-feedback:hover {
-      background-color: #F57C00;
     }
     .question-box {
       margin-top: 20px;
@@ -57,10 +39,14 @@
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      font-size: 1.3rem;
+      font-size: 1.5rem;
       color: #222;
       min-height: 80px;
-      word-break: keep-all;
+    }
+    #count {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #555;
     }
     .fade-in {
       animation: fadeIn 0.5s ease-in-out;
@@ -69,7 +55,7 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
-    .all-questions {
+    .all-questions, .manage-section {
       margin-top: 30px;
       padding: 15px;
       background: white;
@@ -78,48 +64,55 @@
       font-size: 1rem;
       display: none;
       text-align: left;
-      max-width: 90%;
+      max-width: 500px;
       margin-left: auto;
       margin-right: auto;
     }
     .all-questions ul {
       padding-left: 20px;
     }
-    .feedback {
-      margin-top: 40px;
+    .manage-section textarea {
+      width: 100%;
+      height: 100px;
     }
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.5rem;
-      }
-      .question-box {
-        font-size: 1.1rem;
-        padding: 15px;
-      }
+    .question-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .question-item button {
+      background-color: #e74c3c;
+      font-size: 0.8rem;
+      padding: 4px 8px;
     }
   </style>
 </head>
 <body>
   <h1>밸런스 게임 질문 뽑기</h1>
   <div class="buttons">
-    <button id="pickBtn">질문 뽑기</button>
-    <button id="resetBtn">다시 시작</button>
-    <button class="btn-all-questions" id="allBtn">모든 질문 보기</button>
+    <button onclick="pickQuestion()">질문 뽑기</button>
+    <button onclick="resetQuestions()">다시 시작</button>
+    <button onclick="toggleAllQuestions()">모든 질문 보기</button>
+    <button onclick="toggleManageQuestions()">질문 관리</button>
   </div>
   <div class="question-box" id="questionBox">버튼을 눌러 질문을 뽑아보세요!</div>
-  <div id="count">0 / 0</div>
+  <div id="count">0 / 10</div>
 
   <div class="all-questions" id="allQuestions">
-    <h3>질문 목록</h3>
+    <h3>모든 질문 목록</h3>
     <ul id="questionList"></ul>
   </div>
 
-  <div class="feedback">
-    <button class="btn-feedback" id="feedbackBtn">건의사항 남기기</button>
+  <div class="manage-section" id="manageSection">
+    <h3>질문 관리</h3>
+    <textarea id="manageInput"></textarea><br>
+    <button onclick="saveQuestions()">질문 저장</button>
+    <button onclick="addQuestion()">질문 추가</button>
   </div>
 
   <script>
-    const originalQuestions = [
+    let originalQuestions = [
       "모든 슬픔을 없애기 vs 모든 기쁨을 없애기",
       "죽는 순간을 미리 알기 vs 죽는 순간을 모른 채 살기",
       "행복하지만 의미 없는 삶 vs 의미 있지만 고통스러운 삶",
@@ -165,7 +158,7 @@
     }
 
     function updateCount() {
-      document.getElementById("count").innerText = `${usedQuestions.length} / ${originalQuestions.length}`;
+      document.getElementById("count").innerText = ${usedQuestions.length} / ${originalQuestions.length};
     }
 
     function toggleAllQuestions() {
@@ -177,21 +170,48 @@
     function renderAllQuestions() {
       const list = document.getElementById("questionList");
       list.innerHTML = '';
-      originalQuestions.forEach(q => {
+      originalQuestions.forEach((q, index) => {
         const li = document.createElement('li');
-        li.textContent = q;
+        li.classList.add('question-item');
+        li.innerHTML = ${q} <button onclick="removeQuestion(${index})">삭제</button>;
         list.appendChild(li);
       });
     }
 
-    document.getElementById("pickBtn").addEventListener("click", pickQuestion);
-    document.getElementById("resetBtn").addEventListener("click", resetQuestions);
-    document.getElementById("allBtn").addEventListener("click", toggleAllQuestions);
-    document.getElementById("feedbackBtn").addEventListener("click", () => {
-      window.location.href = "https://forms.gle/yourGoogleFormLink";
-    });
+    function toggleManageQuestions() {
+      const manageDiv = document.getElementById("manageSection");
+      const textArea = document.getElementById("manageInput");
+      textArea.value = originalQuestions.join("\n");
+      manageDiv.style.display = manageDiv.style.display === "none" ? "block" : "none";
+    }
 
-    updateCount();
+    function saveQuestions() {
+      const textArea = document.getElementById("manageInput");
+      originalQuestions = textArea.value.split("\n").map(q => q.trim()).filter(q => q);
+      resetQuestions();
+      renderAllQuestions();
+      alert("질문이 저장되었습니다.");
+    }
+
+    function addQuestion() {
+      const textArea = document.getElementById("manageInput");
+      const newQuestion = prompt("추가할 질문을 입력하세요:");
+      if (newQuestion) {
+        originalQuestions.push(newQuestion);
+        textArea.value = originalQuestions.join("\n");
+        resetQuestions();
+        renderAllQuestions();
+      }
+    }
+
+    function removeQuestion(index) {
+      if (confirm("이 질문을 삭제할까요?")) {
+        originalQuestions.splice(index, 1);
+        resetQuestions();
+        renderAllQuestions();
+        document.getElementById("manageInput").value = originalQuestions.join("\n");
+      }
+    }
   </script>
 </body>
 </html>
