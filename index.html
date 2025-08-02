@@ -26,23 +26,22 @@
     button:hover {
       background-color: #2980b9;
     }
-    .group {
-      background-color: #ffffff;
+    table {
       margin: 20px auto;
-      padding: 15px;
-      border-radius: 10px;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 800px;
+      background: #fff;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      width: 300px;
     }
-    .group h2 {
-      color: #34495e;
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
     }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      padding: 5px 0;
+    th {
+      background-color: #ecf0f1;
+      color: #2c3e50;
     }
   </style>
 </head>
@@ -52,7 +51,7 @@
   <div id="groups"></div>
 
   <script>
-    const leaders = ["1조 - 은재", "2조 - 재민", "3조 - 산", "4조 - 승빈"];
+    const leaders = ["은재", "재민", "산", "승빈"];
     const members = [
       "임서현", "공민지", "김현기", "박소은", "권동국",
       "김상권", "변서호", "서지성", "최승아", "김소현",
@@ -68,39 +67,35 @@
     }
 
     function assignSeats() {
-      const shuffledMembers = shuffle([...members]);
+      const shuffled = shuffle([...members]);
       const groups = [[], [], [], []];
-
-      // 각 그룹에 조장 추가 (고정)
-      for (let i = 0; i < 4; i++) {
-        groups[i].push(leaders[i]);
-      }
-
-      // 나머지 인원 랜덤하게 배분
-      for (let i = 0; i < shuffledMembers.length; i++) {
-        groups[i % 4].push(shuffledMembers[i]);
+      for (let i = 0; i < shuffled.length; i++) {
+        groups[i % 4].push(shuffled[i]);
       }
 
       const container = document.getElementById("groups");
       container.innerHTML = "";
 
-      groups.forEach((group, index) => {
-        const groupDiv = document.createElement("div");
-        groupDiv.className = "group";
-        const title = document.createElement("h2");
-        title.textContent = `Group ${index + 1}`;
-        const list = document.createElement("ul");
+      const table = document.createElement("table");
+      const headerRow = document.createElement("tr");
+      for (let i = 0; i < 4; i++) {
+        const th = document.createElement("th");
+        th.textContent = `${i + 1}조 - ${leaders[i]}`;
+        headerRow.appendChild(th);
+      }
+      table.appendChild(headerRow);
 
-        group.forEach(name => {
-          const li = document.createElement("li");
-          li.textContent = name;
-          list.appendChild(li);
-        });
+      for (let row = 0; row < 4; row++) {
+        const tr = document.createElement("tr");
+        for (let col = 0; col < 4; col++) {
+          const td = document.createElement("td");
+          td.textContent = groups[col][row] || "";
+          tr.appendChild(td);
+        }
+        table.appendChild(tr);
+      }
 
-        groupDiv.appendChild(title);
-        groupDiv.appendChild(list);
-        container.appendChild(groupDiv);
-      });
+      container.appendChild(table);
     }
   </script>
 </body>
