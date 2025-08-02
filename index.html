@@ -2,196 +2,106 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>밸런스 게임 랜덤 뽑기</title>
+  <title>자리 배정 프로그램 - 생각의 바다</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       text-align: center;
+      background-color: #f9f9f9;
       padding: 20px;
-      background: #f4f4f4;
-      margin: 0;
     }
     h1 {
-      font-size: 2rem;
-      margin-bottom: 10px;
-      color: #333;
-    }
-    .buttons {
-      margin: 20px 0;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      color: #2c3e50;
     }
     button {
-      padding: 10px 15px;
+      padding: 10px 20px;
       font-size: 1rem;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      background-color: #4CAF50;
+      background-color: #3498db;
       color: white;
-      margin: 5px;
-      transition: background 0.3s ease;
-      flex: 1 1 40%;
-      max-width: 150px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 10px;
     }
     button:hover {
-      background-color: #45a049;
+      background-color: #2980b9;
     }
-    .btn-all-questions {
-      background-color: #008CBA;
-    }
-    .btn-all-questions:hover {
-      background-color: #007BB5;
-    }
-    .btn-feedback {
-      background-color: #FF9800;
-    }
-    .btn-feedback:hover {
-      background-color: #F57C00;
-    }
-    .question-box {
-      margin-top: 20px;
-      padding: 20px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      font-size: 1.3rem;
-      color: #222;
-      min-height: 80px;
-      word-break: keep-all;
-    }
-    .fade-in {
-      animation: fadeIn 0.5s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .all-questions {
-      margin-top: 30px;
+    .group {
+      background-color: #ffffff;
+      margin: 20px auto;
       padding: 15px;
-      background: white;
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      font-size: 1rem;
-      display: none;
-      text-align: left;
-      max-width: 90%;
-      margin-left: auto;
-      margin-right: auto;
+      width: 300px;
     }
-    .all-questions ul {
-      padding-left: 20px;
+    .group h2 {
+      color: #34495e;
     }
-    .feedback {
-      margin-top: 40px;
+    ul {
+      list-style-type: none;
+      padding: 0;
     }
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.5rem;
-      }
-      .question-box {
-        font-size: 1.1rem;
-        padding: 15px;
-      }
+    li {
+      padding: 5px 0;
     }
   </style>
 </head>
 <body>
-  <h1>밸런스 게임 질문 뽑기</h1>
-  <div class="buttons">
-    <button id="pickBtn">질문 뽑기</button>
-    <button id="resetBtn">다시 시작</button>
-    <button class="btn-all-questions" id="allBtn">모든 질문 보기</button>
-  </div>
-  <div class="question-box" id="questionBox">버튼을 눌러 질문을 뽑아보세요!</div>
-  <div id="count">0 / 0</div>
-
-  <div class="all-questions" id="allQuestions">
-    <h3>질문 목록</h3>
-    <ul id="questionList"></ul>
-  </div>
-
-  <div class="feedback">
-    <button class="btn-feedback" id="feedbackBtn">건의사항 남기기</button>
-  </div>
+  <h1>생각의 바다 - 자리 배정기</h1>
+  <button onclick="assignSeats()">자리 배정하기</button>
+  <div id="groups"></div>
 
   <script>
-    const originalQuestions = [
-      "모든 슬픔을 없애기 vs 모든 기쁨을 없애기",
-      "죽는 순간을 미리 알기 vs 죽는 순간을 모른 채 살기",
-      "행복하지만 의미 없는 삶 vs 의미 있지만 고통스러운 삶",
-      "불타는 연애 vs 편안한 우정 같은 연애",
-      "나를 100% 이해하는 연인 vs 나를 100% 설레게 하는 연인",
-      "스스로 선택한 실패 vs 강요된 성공",
-      "인류 전체를 위해 희생 vs 내 가족과 나만 지키기",
-      "1년 동안 휴대폰 없이 살기 vs 1년 동안 친구 없이 살기",
-      "돈은 풍족하지만 시간이 없음 vs 시간은 많지만 돈이 없음",
-      "사랑 없는 안정적인 관계 vs 열정적이지만 불안정한 관계",
-      "선한 거짓말로 사람을 위로하기 vs 냉정한 진실로 사람을 일깨우기",
-      "진실을 알고 상처받기 vs 거짓을 믿고 평온하기",
-      "결혼 전, 과거 했던 동거 사실, 밝혀야 한다 vs 비밀로 해도 된다",
-      "결과는 나쁘지만 의도는 선한 행동 vs 결과는 좋지만 의도는 악한 행동",
-      "성선설 vs 성악설",
-      "우정 vs 사랑(◍•ᴗ•◍)❤"
+    const leaders = ["1조 - 은재", "2조 - 재민", "3조 - 산", "4조 - 승빈"];
+    const members = [
+      "임서현", "공민지", "김현기", "박소은", "권동국",
+      "김상권", "변서호", "서지성", "최승아", "김소현",
+      "김환희", "정서연", "조장원"
     ];
 
-    let questions = [...originalQuestions];
-    let usedQuestions = [];
-
-    function pickQuestion() {
-      if (questions.length === 0) {
-        document.getElementById("questionBox").innerText = "모든 질문을 다 뽑았습니다!";
-        return;
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
       }
-      const randomIndex = Math.floor(Math.random() * questions.length);
-      const question = questions.splice(randomIndex, 1)[0];
-      usedQuestions.push(question);
-      const box = document.getElementById("questionBox");
-      box.classList.remove("fade-in");
-      void box.offsetWidth;
-      box.classList.add("fade-in");
-      box.innerText = question;
-      updateCount();
+      return array;
     }
 
-    function resetQuestions() {
-      questions = [...originalQuestions];
-      usedQuestions = [];
-      document.getElementById("questionBox").innerText = "다시 시작합니다! 질문을 뽑아보세요!";
-      updateCount();
-    }
+    function assignSeats() {
+      const shuffledMembers = shuffle([...members]);
+      const groups = [[], [], [], []];
 
-    function updateCount() {
-      document.getElementById("count").innerText = `${usedQuestions.length} / ${originalQuestions.length}`;
-    }
+      // 각 그룹에 조장 추가 (고정)
+      for (let i = 0; i < 4; i++) {
+        groups[i].push(leaders[i]);
+      }
 
-    function toggleAllQuestions() {
-      const allQuestionsDiv = document.getElementById("allQuestions");
-      renderAllQuestions();
-      allQuestionsDiv.style.display = allQuestionsDiv.style.display === "none" ? "block" : "none";
-    }
+      // 나머지 인원 랜덤하게 배분
+      for (let i = 0; i < shuffledMembers.length; i++) {
+        groups[i % 4].push(shuffledMembers[i]);
+      }
 
-    function renderAllQuestions() {
-      const list = document.getElementById("questionList");
-      list.innerHTML = '';
-      originalQuestions.forEach(q => {
-        const li = document.createElement('li');
-        li.textContent = q;
-        list.appendChild(li);
+      const container = document.getElementById("groups");
+      container.innerHTML = "";
+
+      groups.forEach((group, index) => {
+        const groupDiv = document.createElement("div");
+        groupDiv.className = "group";
+        const title = document.createElement("h2");
+        title.textContent = `Group ${index + 1}`;
+        const list = document.createElement("ul");
+
+        group.forEach(name => {
+          const li = document.createElement("li");
+          li.textContent = name;
+          list.appendChild(li);
+        });
+
+        groupDiv.appendChild(title);
+        groupDiv.appendChild(list);
+        container.appendChild(groupDiv);
       });
     }
-
-    document.getElementById("pickBtn").addEventListener("click", pickQuestion);
-    document.getElementById("resetBtn").addEventListener("click", resetQuestions);
-    document.getElementById("allBtn").addEventListener("click", toggleAllQuestions);
-    document.getElementById("feedbackBtn").addEventListener("click", () => {
-      window.location.href = "https://naver.me/FtG8vNgc";
-    });
-
-    updateCount();
   </script>
 </body>
 </html>
