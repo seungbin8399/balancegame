@@ -60,10 +60,12 @@
       }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
   <h1>생각의 바다 - 자리 배정기</h1>
   <button onclick="assignSeats()">자리 배정하기</button>
+  <button onclick="saveAsImage()">이미지로 저장하기</button>
   <div class="table-container" id="groups"></div>
 
   <script>
@@ -112,6 +114,16 @@
       }
 
       container.appendChild(table);
+    }
+
+    function saveAsImage() {
+      const target = document.querySelector("#groups");
+      html2canvas(target).then(canvas => {
+        const link = document.createElement("a");
+        link.download = '자리배정표.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
     }
   </script>
 </body>
