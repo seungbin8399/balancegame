@@ -26,11 +26,15 @@
     button:hover {
       background-color: #2980b9;
     }
+    .table-container {
+      overflow-x: auto;
+    }
     table {
       margin: 20px auto;
       border-collapse: collapse;
-      width: 90%;
-      max-width: 800px;
+      width: 100%;
+      min-width: 600px;
+      max-width: 1000px;
       background: #fff;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
@@ -38,17 +42,29 @@
       border: 1px solid #ddd;
       padding: 12px;
       text-align: center;
+      word-break: keep-all;
     }
     th {
       background-color: #ecf0f1;
       color: #2c3e50;
+      font-weight: bold;
+    }
+    .leader {
+      font-weight: bold;
+      color: #e74c3c;
+    }
+    @media screen and (max-width: 768px) {
+      th, td {
+        padding: 8px;
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
   <h1>생각의 바다 - 자리 배정기</h1>
   <button onclick="assignSeats()">자리 배정하기</button>
-  <div id="groups"></div>
+  <div class="table-container" id="groups"></div>
 
   <script>
     const leaders = ["은재", "재민", "산", "승빈"];
@@ -80,7 +96,7 @@
       const headerRow = document.createElement("tr");
       for (let i = 0; i < 4; i++) {
         const th = document.createElement("th");
-        th.textContent = `${i + 1}조 - ${leaders[i]}`;
+        th.innerHTML = `${i + 1}조 - <span class="leader">${leaders[i]}</span>`;
         headerRow.appendChild(th);
       }
       table.appendChild(headerRow);
