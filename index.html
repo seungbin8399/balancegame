@@ -69,11 +69,11 @@
   <div class="table-container" id="groups"></div>
 
   <script>
-    const leaders = ["은재", "재민", "산", "승빈"];
+    const leaders = ["최승아", "유승빈", "박은재"];
     const members = [
-      "임서현", "공민지", "김현기", "박소은", "권동국",
-      "김상권", "변서호", "서지성", "최승아", "남우석",
-      "김환희", "정서연", "조장원"
+      "김현기", "권동국", "김상권", "서지성", "손가은",
+      "이주은", "정용진", "최서연", "최유리",
+      "김환희", 
     ];
 
     function shuffle(array) {
@@ -86,9 +86,9 @@
 
     function assignSeats() {
       const shuffled = shuffle([...members]);
-      const groups = [[], [], [], []];
+      const groups = [[], [], []];
       for (let i = 0; i < shuffled.length; i++) {
-        groups[i % 4].push(shuffled[i]);
+        groups[i % 3].push(shuffled[i]);
       }
 
       const container = document.getElementById("groups");
@@ -96,16 +96,17 @@
 
       const table = document.createElement("table");
       const headerRow = document.createElement("tr");
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 3; i++) {
         const th = document.createElement("th");
         th.innerHTML = `${i + 1}조 - <span class="leader">${leaders[i]}</span>`;
         headerRow.appendChild(th);
       }
       table.appendChild(headerRow);
 
-      for (let row = 0; row < 4; row++) {
+      const maxRows = Math.max(...groups.map(g => g.length));
+      for (let row = 0; row < maxRows; row++) {
         const tr = document.createElement("tr");
-        for (let col = 0; col < 4; col++) {
+        for (let col = 0; col < 3; col++) {
           const td = document.createElement("td");
           td.textContent = groups[col][row] || "";
           tr.appendChild(td);
