@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>자리 배정 프로그램 - 생각의 바다</title>
   <style>
     body {
@@ -10,31 +10,25 @@
       background-color: #f9f9f9;
       padding: 20px;
     }
-    h1 {
-      color: #2c3e50;
-    }
+    h1 { color: #2c3e50; }
     button {
       padding: 10px 20px;
       font-size: 1rem;
       background-color: #3498db;
-      color: white;
+      color: #fff;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       margin: 10px;
     }
-    button:hover {
-      background-color: #2980b9;
-    }
-    .table-container {
-      overflow-x: auto;
-    }
+    button:hover { background-color: #2980b9; }
+    .table-container { overflow-x: auto; }
     table {
       margin: 20px auto;
       border-collapse: collapse;
       width: 100%;
-      min-width: 600px;
-      max-width: 1000px;
+      min-width: 700px;
+      max-width: 1100px;
       background: #fff;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
@@ -49,15 +43,9 @@
       color: #2c3e50;
       font-weight: bold;
     }
-    .leader {
-      font-weight: bold;
-      color: #e74c3c;
-    }
+    .leader { font-weight: bold; color: #e74c3c; }
     @media screen and (max-width: 768px) {
-      th, td {
-        padding: 8px;
-        font-size: 0.9rem;
-      }
+      th, td { padding: 8px; font-size: 0.9rem; }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -69,11 +57,13 @@
   <div class="table-container" id="groups"></div>
 
   <script>
-    const leaders = ["최승아", "유승빈", "박은재"];
+    // ✅ 조장 5명
+    const leaders = ["김상권", "박은재", "유승빈", "신재민", "최승아"];
+
+    // ✅ 조원 14명
     const members = [
-      "김현기", "권동국", "김상권", "서지성", "손가은",
-      "이주은", "정용진", "최서연", "최유리",
-      "김환희", 
+      "임서현","공민지","권남혁","김현기","권동국","변서호","심원섭",
+      "정용진","최서연","최유리","하경덕","김환희","윤지","장원"
     ];
 
     function shuffle(array) {
@@ -85,28 +75,37 @@
     }
 
     function assignSeats() {
+      const numGroups = leaders.length; // 5조
       const shuffled = shuffle([...members]);
-      const groups = [[], [], []];
+
+      // 그룹 배열 초기화
+      const groups = Array.from({ length: numGroups }, () => []);
+
+      // 라운드로빈 배치
       for (let i = 0; i < shuffled.length; i++) {
-        groups[i % 3].push(shuffled[i]);
+        groups[i % numGroups].push(shuffled[i]);
       }
 
+      // 테이블 렌더
       const container = document.getElementById("groups");
       container.innerHTML = "";
 
       const table = document.createElement("table");
+
+      // 헤더 (조장 표시)
       const headerRow = document.createElement("tr");
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < numGroups; i++) {
         const th = document.createElement("th");
         th.innerHTML = `${i + 1}조 - <span class="leader">${leaders[i]}</span>`;
         headerRow.appendChild(th);
       }
       table.appendChild(headerRow);
 
+      // 최대 인원 수에 맞춰 행 생성
       const maxRows = Math.max(...groups.map(g => g.length));
       for (let row = 0; row < maxRows; row++) {
         const tr = document.createElement("tr");
-        for (let col = 0; col < 3; col++) {
+        for (let col = 0; col < numGroups; col++) {
           const td = document.createElement("td");
           td.textContent = groups[col][row] || "";
           tr.appendChild(td);
@@ -119,10 +118,14 @@
 
     function saveAsImage() {
       const target = document.querySelector("#groups");
+      if (!target.firstChild) {
+        // 테이블이 없으면 먼저 배정 실행
+        assignSeats();
+      }
       html2canvas(target).then(canvas => {
         const link = document.createElement("a");
-        link.download = '자리배정표.png';
-        link.href = canvas.toDataURL();
+        link.download = "자리배정표.png";
+        link.href = canvas.toDataURL("image/png");
         link.click();
       });
     }
